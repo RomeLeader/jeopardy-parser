@@ -76,8 +76,7 @@ def parse_game(f, sql, gid):
         return
     category = r.find("td", class_="category_name").get_text()
     text = r.find("td", class_="clue_text").get_text()
-    answer = BeautifulSoup(r.find("div", onmouseover=True).get("onmouseover"), "lxml")
-    answer = answer.find("em").get_text()
+    answer = r.find("em", class_="correct_response").get_text()
     # False indicates no preset value for a clue
     insert(sql, [gid, airdate, 3, category, False, text, answer])
 
@@ -100,8 +99,7 @@ def parse_round(bsoup, sql, rnd, gid, airdate):
         if not is_missing:
             value = a.find("td", class_=re.compile("clue_value")).get_text().lstrip("D: $")
             text = a.find("td", class_="clue_text").get_text()
-            answer = BeautifulSoup(a.find("div", onmouseover=True).get("onmouseover"), "lxml")
-            answer = answer.find("em", class_="correct_response").get_text()
+            answer = a.find("em", class_="correct_response").get_text()
             insert(sql, [gid, airdate, rnd, categories[x], value, text, answer])
         # Always update x, even if we skip
         # a clue, as this keeps things in order. there
